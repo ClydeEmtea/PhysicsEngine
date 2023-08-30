@@ -1,0 +1,56 @@
+﻿  main.cpp
+C:\Users\EmTea\source\repos\PE1\PE1\source\main.cpp(240,97): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+          and
+          [
+              T=float
+          ]
+C:\Users\EmTea\source\repos\PE1\PE1\source\main.cpp(240,85): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+          and
+          [
+              T=float
+          ]
+C:\Users\EmTea\source\repos\PE1\PE1\source\main.cpp(261,93): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+          and
+          [
+              T=float
+          ]
+C:\Users\EmTea\source\repos\PE1\PE1\source\main.cpp(261,81): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+          and
+          [
+              T=float
+          ]
+C:\Users\EmTea\source\repos\PE1\PE1\source\main.cpp(268,67): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+          and
+          [
+              T=float
+          ]
+C:\Users\EmTea\source\repos\PE1\PE1\source\main.cpp(268,55): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+          with
+          [
+              T=int
+          ]
+          and
+          [
+              T=float
+          ]
+  PE1.vcxproj -> C:\Users\EmTea\source\repos\PE1\x64\Debug\PE1.exe
