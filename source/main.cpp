@@ -286,7 +286,6 @@ void handleInput(sf::RenderWindow& window, sf::Event& event, BWindow& bWindow)
                 }
             }
 		}
-        std::cout << sticks.size() << std::endl;
 	}
 }
 
