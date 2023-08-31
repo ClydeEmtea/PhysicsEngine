@@ -1,5 +1,5 @@
 ﻿  main.cpp
-C:\Users\EmTea\source\repos\PE1\PE1\source\main.cpp(240,97): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+C:\Users\EmTea\source\repos\PE1\PE1\source\main.cpp(254,97): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
           with
           [
               T=int
@@ -8,7 +8,7 @@ C:\Users\EmTea\source\repos\PE1\PE1\source\main.cpp(240,97): warning C4244: 'arg
           [
               T=float
           ]
-C:\Users\EmTea\source\repos\PE1\PE1\source\main.cpp(240,85): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+C:\Users\EmTea\source\repos\PE1\PE1\source\main.cpp(254,85): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
           with
           [
               T=int
@@ -17,7 +17,7 @@ C:\Users\EmTea\source\repos\PE1\PE1\source\main.cpp(240,85): warning C4244: 'arg
           [
               T=float
           ]
-C:\Users\EmTea\source\repos\PE1\PE1\source\main.cpp(261,93): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+C:\Users\EmTea\source\repos\PE1\PE1\source\main.cpp(275,93): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
           with
           [
               T=int
@@ -26,7 +26,7 @@ C:\Users\EmTea\source\repos\PE1\PE1\source\main.cpp(261,93): warning C4244: 'arg
           [
               T=float
           ]
-C:\Users\EmTea\source\repos\PE1\PE1\source\main.cpp(261,81): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+C:\Users\EmTea\source\repos\PE1\PE1\source\main.cpp(275,81): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
           with
           [
               T=int
@@ -35,7 +35,7 @@ C:\Users\EmTea\source\repos\PE1\PE1\source\main.cpp(261,81): warning C4244: 'arg
           [
               T=float
           ]
-C:\Users\EmTea\source\repos\PE1\PE1\source\main.cpp(268,67): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+C:\Users\EmTea\source\repos\PE1\PE1\source\main.cpp(282,67): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
           with
           [
               T=int
@@ -44,7 +44,7 @@ C:\Users\EmTea\source\repos\PE1\PE1\source\main.cpp(268,67): warning C4244: 'arg
           [
               T=float
           ]
-C:\Users\EmTea\source\repos\PE1\PE1\source\main.cpp(268,55): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+C:\Users\EmTea\source\repos\PE1\PE1\source\main.cpp(282,55): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
           with
           [
               T=int

@@ -35,6 +35,8 @@ namespace Constants
 
 bool openedB = true;
 bool delAll = false;
+bool stopSim = false;
+bool startSim = false;
 int lastSelected = 0;
 void handleInput(sf::RenderWindow& window, sf::Event& event, BWindow& bWindow);
 
@@ -51,7 +53,6 @@ void startSimulation();
 void stopSimulation();
 
 Joint* selectedJoint = nullptr;
-int nowCreated = 0;
 
 int main()
 {
@@ -62,6 +63,13 @@ int main()
     sf::Clock deltaClock;
     DrawingHandler dh;
     BWindow bWindow;
+
+ //   for (int i = 0; i < 50; i++) {
+	//	joints.push_back(new Joint(sf::Vector2f(400 + i * 5, 200), Constants::white));
+	//}
+ //   for (int i = 0; i < 49; i++) {
+ //       sticks.push_back(new Stick(joints[i], joints[i + 1], Constants::white));
+ //   }
 
     while (window.isOpen())
     {
@@ -77,7 +85,7 @@ int main()
 
         if (openedB)
         {
-            bWindow.update(delAll);
+            bWindow.update(delAll, lastSelected, stopSim, startSim);
         }
         if (selectedJoint)
         {
@@ -96,9 +104,16 @@ int main()
         {
 			deleteAll(sticks, joints);
 		}
-
-        //ImGui::ShowDemoWindow();
-
+        if (stopSim)
+        {
+			stopSimulation();
+            stopSim = !stopSim;
+		}
+        if (startSim)
+        {
+			startSimulation();
+			startSim = !startSim;
+		}
 
 
         window.clear(sf::Color(18, 33, 43)); // Color background
@@ -137,34 +152,33 @@ void handleInput(sf::RenderWindow& window, sf::Event& event, BWindow& bWindow)
            case sf::Keyboard::Q:
                 bWindow.selectButton(0);
                 lastSelected = 0;
-                if (simulating) stopSimulation();
+                stopSim = true;
             break;
            case sf::Keyboard::W:
 				bWindow.selectButton(1);
                 lastSelected = 1;
-                nowCreated = 0;
-				if (simulating) stopSimulation();
+				stopSim = true;
             break;
            case sf::Keyboard::E:
                 bWindow.selectButton(2);
                 lastSelected = 2;
-                if (simulating) stopSimulation();
+                stopSim = true;
             break;
            case sf::Keyboard::R:
 				bWindow.selectButton(3);
                 lastSelected = 3;
-                if (simulating) stopSimulation();
+                stopSim = true;
             break;
            case sf::Keyboard::Space:
                if (bWindow.isButtonSelected(4))
                {
                    bWindow.selectButton(lastSelected);
-                   if (simulating) stopSimulation();
+                   stopSim = true;
                }
 			   else
                {
                    bWindow.selectButton(4);
-                   startSimulation();
+                   startSim = true;
                }
 
 			break;
@@ -228,7 +242,7 @@ void handleInput(sf::RenderWindow& window, sf::Event& event, BWindow& bWindow)
                                     sf::Vector2f jointPos = joints[i]->position;
                                     float distance = std::sqrt((mousePos.x - jointPos.x) * (mousePos.x - jointPos.x) +
                                         (mousePos.y - jointPos.y) * (mousePos.y - jointPos.y));
-                                    if (distance <= Constants::radius)
+                                    if (distance <= Constants::radius * 2)
                                     {
                                         sticks.push_back(new Stick(joints[i], selectedJoint, Constants::white));
                                         found = true;
@@ -250,7 +264,7 @@ void handleInput(sf::RenderWindow& window, sf::Event& event, BWindow& bWindow)
                                 sf::Vector2f jointPos = joints[i]->position;
                                 float distance = std::sqrt((mousePos.x - jointPos.x) * (mousePos.x - jointPos.x) +
                                     (mousePos.y - jointPos.y) * (mousePos.y - jointPos.y));
-                                if (distance <= Constants::radius)
+                                if (distance <= Constants::radius * 2)
                                 {
                                     selectedJoint = joints[i];
                                     found = true;
@@ -349,74 +363,90 @@ void startSimulation()
     simulating = true;
     oldSticks.clear();
     oldJoints.clear();
-    if (sticks.size() == 0)
-    { 
-        for (int i = 0; i < joints.size(); i++)
-        {
-			oldJoints.push_back(new Joint(joints[i]->position, joints[i]->color, joints[i]->fixed));
-            if (selectedJoint == joints[i]) selectedJoint = oldJoints[i];
-		}
-    }
+    bool selected = false;
     
-    else {
-        for (int i = 0; i < sticks.size(); i++)
+    for (int i = 0; i < sticks.size(); i++)
+    {
+        Joint* jointA = nullptr;
+        Joint* jointB = nullptr;
+        for (int j = 0; j < oldJoints.size(); j++)
         {
-            Joint* jointA = nullptr;
-            Joint* jointB = nullptr;
-            for (int j = 0; j < oldJoints.size(); j++)
+            if (oldJoints[j]->position == sticks[i]->jointA->position)
             {
-                if (oldJoints[j]->position == sticks[i]->jointA->position)
-                {
-                    jointA = oldJoints[j];
-                    break;
-                }
-            }
-            for (int j = 0; j < oldJoints.size(); j++)
-            {
-                if (oldJoints[j]->position == sticks[i]->jointB->position)
-                {
-                    jointB = oldJoints[j];
-                    break;
-                }
-            }
-            if (jointA && jointB)
-            {
-                oldSticks.push_back(new Stick(jointA, jointB, sticks[i]->color));
-            }
-            else if (jointA)
-            {
-                oldJoints.emplace_back(jointB = new Joint(sticks[i]->jointB->position, sticks[i]->jointB->color, sticks[i]->jointB->fixed));
-                oldSticks.push_back(new Stick(jointA, jointB, sticks[i]->color));
-            }
-            else if (jointB)
-            {
-                oldJoints.emplace_back(jointA = new Joint(sticks[i]->jointA->position, sticks[i]->jointA->color, sticks[i]->jointA->fixed));
-                oldSticks.push_back(new Stick(jointA, jointB, sticks[i]->color));
-            }
-            else
-            {
-                oldJoints.emplace_back(jointA = new Joint(sticks[i]->jointA->position, sticks[i]->jointA->color, sticks[i]->jointA->fixed));
-                oldJoints.emplace_back(jointB = new Joint(sticks[i]->jointB->position, sticks[i]->jointB->color, sticks[i]->jointB->fixed));
-                oldSticks.push_back(new Stick(jointA, jointB, sticks[i]->color));
-            }
-            if (selectedJoint && selectedJoint->position == sticks[i]->jointA->position)
-            {
-                selectedJoint = jointA;
-            }
-            else if (selectedJoint && selectedJoint->position == sticks[i]->jointB->position)
-            {
-                selectedJoint = jointB;
+                jointA = oldJoints[j];
+                break;
             }
         }
+        for (int j = 0; j < oldJoints.size(); j++)
+        {
+            if (oldJoints[j]->position == sticks[i]->jointB->position)
+            {
+                jointB = oldJoints[j];
+                break;
+            }
+        }
+        if (jointA && jointB)
+        {
+            oldSticks.push_back(new Stick(jointA, jointB, sticks[i]->color));
+        }
+        else if (jointA)
+        {
+            oldJoints.emplace_back(jointB = new Joint(sticks[i]->jointB->position, sticks[i]->jointB->color, sticks[i]->jointB->fixed));
+            oldSticks.push_back(new Stick(jointA, jointB, sticks[i]->color));
+        }
+        else if (jointB)
+        {
+            oldJoints.emplace_back(jointA = new Joint(sticks[i]->jointA->position, sticks[i]->jointA->color, sticks[i]->jointA->fixed));
+            oldSticks.push_back(new Stick(jointA, jointB, sticks[i]->color));
+        }
+        else
+        {
+            oldJoints.emplace_back(jointA = new Joint(sticks[i]->jointA->position, sticks[i]->jointA->color, sticks[i]->jointA->fixed));
+            oldJoints.emplace_back(jointB = new Joint(sticks[i]->jointB->position, sticks[i]->jointB->color, sticks[i]->jointB->fixed));
+            oldSticks.push_back(new Stick(jointA, jointB, sticks[i]->color));
+        }
+        if (selectedJoint && selectedJoint->position == sticks[i]->jointA->position)
+        {
+            selectedJoint = jointA;
+            selected = true;
+        }
+        else if (selectedJoint && selectedJoint->position == sticks[i]->jointB->position)
+        {
+            selectedJoint = jointB;
+            selected = true;
+        }
     }
+
+    for (int i = 0; i < joints.size(); i++)
+    {
+        bool found = false;
+        for (int j = 0; j < oldJoints.size(); j++)
+        {
+            if (joints[i]->position == oldJoints[j]->position)
+            {
+                found = true;
+				break;
+			}
+		}
+        if (!found)
+        oldJoints.emplace_back(new Joint(joints[i]->position, joints[i]->color, joints[i]->fixed));
+        if (selectedJoint && selectedJoint->position == joints[i]->position && !selected)
+        {
+			selectedJoint = oldJoints[oldJoints.size() - 1];
+            selected = true;
+        }
+	}
 }
 
 void stopSimulation()
 {
-    simulating = false;
-    sticks.clear();
-    joints.clear();
-    sticks = oldSticks;
-    joints = oldJoints;
+    if (simulating)
+    {
+        simulating = false;
+        sticks.clear();
+        joints.clear();
+        sticks = oldSticks;
+        joints = oldJoints;
+    }
     
 }

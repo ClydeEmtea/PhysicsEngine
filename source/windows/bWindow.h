@@ -13,7 +13,7 @@ private:
 public:
     BWindow();
 
-    void update(bool& delAll);
+    void update(bool& delAll, int& lastSelected, bool& stopSim, bool& startSim);
     void selectButton(int buttonIndex);
     bool isButtonSelected(int buttonIndex);
     int getSelectedButton();

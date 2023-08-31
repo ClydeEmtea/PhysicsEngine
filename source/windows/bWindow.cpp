@@ -7,7 +7,7 @@ BWindow::BWindow() : selectedButton(0), isBeingDragged(false), isFocused(false) 
     windowPos = ImVec2(201, ImGui::GetIO().DisplaySize.y - 150);
 }
 
-void BWindow::update(bool& delAll) {
+void BWindow::update(bool& delAll, int& lastSelected, bool& stopSim, bool& startSim) {
     int buttonWidth = static_cast<int>(ImGui::GetIO().DisplaySize.x * 2 / 3) / 6 - 7;
 
     ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x * 2 / 3 + 2, 130));
@@ -40,7 +40,26 @@ void BWindow::update(bool& delAll) {
 
         // Set the button size to be square and selectable
         if (ImGui::Selectable(selectableLabels[i], isSelected, 0, ImVec2(buttonWidth, 90))) {
-            selectedButton = i;
+            if (i == 4)
+            {
+                if (isButtonSelected(4))
+                {
+                    selectedButton = lastSelected;
+                    stopSim = true;
+                }
+                else
+                {
+					selectedButton = i;
+					startSim = true;
+				}
+			}
+			else
+			{
+                selectedButton = i;
+                lastSelected = i;
+                stopSim = true;
+            }
+            
         }
 
         ImGui::PopID();
@@ -56,6 +75,8 @@ void BWindow::update(bool& delAll) {
 
     if (ImGui::Button("Delete all", ImVec2(buttonWidth, 90))) {
         delAll = true;
+        stopSim = true;
+        selectButton(lastSelected);
     }
     ImGui::PopStyleColor(3);
 
