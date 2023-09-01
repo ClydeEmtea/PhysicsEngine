@@ -39,19 +39,19 @@ void DrawingHandler::drawBackground(sf::RenderWindow& window, int height, int wi
     }
 }
 
-void DrawingHandler::drawJoints(sf::RenderWindow& window, std::vector<Joint*>& joints, float radius)
+void DrawingHandler::drawJoints(sf::RenderWindow& window, const std::vector<Joint*>& joints, const float radius)
 {
-    for (int i = 0; i < joints.size(); i++)
+    for (const auto joint : joints)
     {
-		joints[i]->draw(window, radius / 2);
+	    joint->draw(window, radius / 2);
 	}
 }
 
-void DrawingHandler::drawSticks(sf::RenderWindow& window, std::vector<Stick*>& sticks, float lineThickness)
+void DrawingHandler::drawSticks(sf::RenderWindow& window, const std::vector<Stick*>& sticks, const float lineThickness)
 {
-    for (int i = 0; i < sticks.size(); i++)
+    for (const auto stick : sticks)
     {
-        sticks[i]->draw(window, lineThickness);
+	    stick->draw(window, lineThickness);
     }
 }
 

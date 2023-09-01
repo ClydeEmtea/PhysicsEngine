@@ -1,7 +1,6 @@
 #include "stick.h"
-#include <iostream>
 
-Stick::Stick(Joint* jointA, Joint* jointB, sf::Color color)
+Stick::Stick(Joint* jointA, Joint* jointB, const sf::Color color)
 {
 	this->jointA = jointA;
 	this->jointB = jointB;
@@ -9,11 +8,11 @@ Stick::Stick(Joint* jointA, Joint* jointB, sf::Color color)
 	this->color = color;
 }
 
-void Stick::draw(sf::RenderWindow& window, float thickness)
+void Stick::draw(sf::RenderWindow& window, const float thickness) const
 {
-	sf::Vector2f delta = jointB->position - jointA->position;
-	float angle = atan2(delta.y, delta.x) * 180.0f / 3.14159265f;
-	float length_ = std::hypot(delta.x, delta.y);
+	const sf::Vector2f delta = jointB->position - jointA->position;
+	const float angle = atan2(delta.y, delta.x) * 180.0f / 3.14159265f;
+	const float length_ = std::hypot(delta.x, delta.y);
 
 	sf::RectangleShape line(sf::Vector2f(length_, thickness));
 	line.setOrigin(0.0f, thickness / 2.0f);  // Set the origin to the left edge and center vertically
@@ -25,13 +24,13 @@ void Stick::draw(sf::RenderWindow& window, float thickness)
 }
 
 
-void Stick::update()
+void Stick::update() const
 {
-		sf::Vector2f delta = jointB->position - jointA->position;
-		float dist = std::hypot(delta.x, delta.y);
-		float diff = (dist - length) / dist;
-		float percent = diff / 2;
-		sf::Vector2f offset = delta * percent;
+	const sf::Vector2f delta = jointB->position - jointA->position;
+	const float dist = std::hypot(delta.x, delta.y);
+	const float diff = (dist - length) / dist;
+	const float percent = diff / 2;
+	const sf::Vector2f offset = delta * percent;
 		if (!jointA->fixed) jointA->position += offset;
 		if (!jointB->fixed) jointB->position -= offset;
 }

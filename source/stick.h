@@ -12,7 +12,7 @@ public:
 	sf::Color color;
 
 	Stick(Joint* jointA, Joint* jointB, sf::Color color);
-	void draw(sf::RenderWindow& window, float thickness);
-	void update();
+	void draw(sf::RenderWindow& window, float thickness) const;
+	void update() const;
 
 };

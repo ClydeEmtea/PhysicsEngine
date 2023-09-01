@@ -1,11 +1,13 @@
 #include "JointWindow.h"
+#include <SFML/Graphics.hpp>
+#include "imgui.h"
 
 JointWindow::JointWindow(Joint* joint)
 {
     this->joint = joint;
 }
 
-void JointWindow::update(bool simulating)
+void JointWindow::update(const bool simulating) const
 {
     ImGui::SetNextWindowPos(ImVec2(900, 10), ImGuiCond_FirstUseEver);
     // Check if the window is open and draw its content
@@ -28,8 +30,8 @@ void JointWindow::update(bool simulating)
             ImGui::Separator();
 
             ImGui::Text("Joint Color:");
-            ImVec4 color = ImVec4(joint->color.r / 255.0f, joint->color.g / 255.0f, joint->color.b / 255.0f, 1.0f);
-            if (ImGui::ColorEdit3("Color", (float*)&color))
+            auto color = ImVec4(joint->color.r / 255.0f, joint->color.g / 255.0f, joint->color.b / 255.0f, 1.0f);
+            if (ImGui::ColorEdit3("Color", reinterpret_cast<float*>(&color)))
             {
                 joint->color = sf::Color(static_cast<sf::Uint8>(color.x * 255.0f),
                     static_cast<sf::Uint8>(color.y * 255.0f),

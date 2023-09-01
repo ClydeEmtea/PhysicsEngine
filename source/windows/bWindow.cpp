@@ -1,14 +1,11 @@
 #include "BWindow.h"
 #include <imgui.h>
-#include <imgui-SFML.h>
-#include <SFML/Window.hpp>
-#include <iostream>
 BWindow::BWindow() : selectedButton(0), isBeingDragged(false), isFocused(false) {
     windowPos = ImVec2(201, ImGui::GetIO().DisplaySize.y - 150);
 }
 
 void BWindow::update(bool& delAll, int& lastSelected, bool& stopSim, bool& startSim) {
-    int buttonWidth = static_cast<int>(ImGui::GetIO().DisplaySize.x * 2 / 3) / 6 - 7;
+	const int buttonWidth = static_cast<int>(ImGui::GetIO().DisplaySize.x * 2 / 3) / 6 - 7;
 
     ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x * 2 / 3 + 2, 130));
     ImGui::SetNextWindowPos(windowPos, ImGuiCond_FirstUseEver);
@@ -23,7 +20,7 @@ void BWindow::update(bool& delAll, int& lastSelected, bool& stopSim, bool& start
     }
 
     if (ImGui::BeginDragDropTarget()) {
-        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("WINDOW_DND")) {
+        if (ImGui::AcceptDragDropPayload("WINDOW_DND")) {
             isBeingDragged = false;
             windowPos = ImVec2(ImGui::GetMousePos().x, windowPos.y);
         }
@@ -36,7 +33,7 @@ void BWindow::update(bool& delAll, int& lastSelected, bool& stopSim, bool& start
         ImGui::PushID(i);
         ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
 
-        bool isSelected = selectedButton == i;
+        const bool isSelected = selectedButton == i;
 
         // Set the button size to be square and selectable
         if (ImGui::Selectable(selectableLabels[i], isSelected, 0, ImVec2(buttonWidth, 90))) {
@@ -83,14 +80,14 @@ void BWindow::update(bool& delAll, int& lastSelected, bool& stopSim, bool& start
     ImGui::End();
 }
 
-bool BWindow::isButtonSelected(int buttonIndex) { return buttonIndex == selectedButton; }
+bool BWindow::isButtonSelected(const int buttonIndex) const { return buttonIndex == selectedButton; }
 
 
-int BWindow::getSelectedButton() { return selectedButton; }
+int BWindow::getSelectedButton() const { return selectedButton; }
 
-bool BWindow::isWindowFocused() { return isFocused; }
+bool BWindow::isWindowFocused() const { return isFocused; }
 
-void BWindow::selectButton(int buttonIndex)
+void BWindow::selectButton(const int buttonIndex)
 {
     selectedButton = buttonIndex;
 }

@@ -16,15 +16,15 @@ using namespace sf;
 
 namespace Constants
 {
-    const int WIDTH = 1200;
-    const int HEIGHT = 800;
+	constexpr int WIDTH = 1200;
+	constexpr int HEIGHT = 800;
 
-    const int lineThickness = 4;
-    const int dotSpacing = 10;
-    const int radius = 15;
-    const int stiffnes = 50;
+	constexpr int lineThickness = 4;
+	constexpr int dotSpacing = 10;
+	constexpr int radius = 15;
+	constexpr int stiffnes = 50;
 
-    const float deltaTime = 0.1f;
+	constexpr float deltaTime = 0.1f;
     const sf::Vector2f gravity = sf::Vector2f(0, 9.81f);
 
     const sf::Color darkGray = Color(30, 34, 45);
@@ -38,11 +38,11 @@ bool delAll = false;
 bool stopSim = false;
 bool startSim = false;
 int lastSelected = 0;
-void handleInput(sf::RenderWindow& window, sf::Event& event, BWindow& bWindow);
+void handleInput(const sf::RenderWindow& window, const sf::Event& event, BWindow& bWindow);
 
 std::vector<Stick*> sticks;
 std::vector<Joint*> joints;
-void updateAll(std::vector<Stick*>& sticks, std::vector<Joint*>& joints, float deltaTime, sf::Vector2f gravity);
+void updateAll(const std::vector<Stick*>& sticks, const std::vector<Joint*>& joints, float deltaTime, sf::Vector2f gravity);
 void checkDeletion(std::vector<Stick*>& sticks, std::vector<Joint*>& joints);
 void deleteAll(std::vector<Stick*>& sticks, std::vector<Joint*>& joints);
 
@@ -56,12 +56,11 @@ Joint* selectedJoint = nullptr;
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(Constants::WIDTH, Constants::HEIGHT), "Window Title");
-    ImGui::SFML::Init(window);
+	RenderWindow window(VideoMode(Constants::WIDTH, Constants::HEIGHT), "Window Title");
+	SFML::Init(window);
 
 
-    sf::Clock deltaClock;
-    DrawingHandler dh;
+    Clock deltaClock;
     BWindow bWindow;
 
  //   for (int i = 0; i < 50; i++) {
@@ -115,13 +114,12 @@ int main()
 			startSim = !startSim;
 		}
 
-
         window.clear(sf::Color(18, 33, 43)); // Color background
-        dh.drawBackground(window, Constants::HEIGHT, Constants::WIDTH, Constants::lineThickness, Constants::dotSpacing, Constants::gray);
+        DrawingHandler::drawBackground(window, Constants::HEIGHT, Constants::WIDTH, Constants::lineThickness, Constants::dotSpacing, Constants::gray);
         ImGui::SFML::Render(window);
 
-        dh.drawSticks(window, sticks, Constants::lineThickness);
-        dh.drawJoints(window, joints, Constants::radius);
+        DrawingHandler::drawSticks(window, sticks, Constants::lineThickness);
+        DrawingHandler::drawJoints(window, joints, Constants::radius);
 
         window.display();
     }
@@ -140,11 +138,11 @@ int main()
     return 0;
 }
 
-void handleInput(sf::RenderWindow& window, sf::Event& event, BWindow& bWindow)
+void handleInput(const sf::RenderWindow& window, const sf::Event& event, BWindow& bWindow)
 {
     if (event.type == sf::Event::KeyPressed)
     {
-        switch (event.key.code)
+        switch (event.key.code)  
         {
            case sf::Keyboard::B:
                openedB = !openedB;
@@ -209,17 +207,17 @@ void handleInput(sf::RenderWindow& window, sf::Event& event, BWindow& bWindow)
         {
             if (!bWindow.isWindowFocused())
             {
-                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+	            const sf::Vector2i mousePos = sf::Mouse::getPosition(window);
                 if (bWindow.isButtonSelected(0))
                 {
-                    for (int i = 0; i < joints.size(); i++)
+                    for (const auto& joint : joints)
                     {
-                        sf::Vector2f jointPos = joints[i]->position;
-                        float distance = std::sqrt((mousePos.x - jointPos.x) * (mousePos.x - jointPos.x) +
+	                    const sf::Vector2f jointPos = joint->position;
+	                    const float distance = std::sqrt((mousePos.x - jointPos.x) * (mousePos.x - jointPos.x) +
                             (mousePos.y - jointPos.y) * (mousePos.y - jointPos.y));
                         if (distance <= Constants::radius)
                         {
-                            selectedJoint = joints[i];
+                            selectedJoint = joint;
                             break;
                         }
 					}
@@ -227,26 +225,26 @@ void handleInput(sf::RenderWindow& window, sf::Event& event, BWindow& bWindow)
 
                 if (bWindow.isButtonSelected(1))
                 {
-                    if (joints.size() > 0)
+                    if (!joints.empty())
                     {
                         bool found = false;
                         if (selectedJoint)
                         {
-                            float selectedDistance = std::sqrt((mousePos.x - selectedJoint->position.x) * (mousePos.x - selectedJoint->position.x) +
+	                        const float selectedDistance = std::sqrt((mousePos.x - selectedJoint->position.x) * (mousePos.x - selectedJoint->position.x) +
                                 (mousePos.y - selectedJoint->position.y) * (mousePos.y - selectedJoint->position.y));
                             if (selectedDistance >= Constants::radius)
                             {
-                                for (int i = 0; i < joints.size(); i++)
+                                for (const auto& joint : joints)
                                 {
-                                    if (joints[i] == selectedJoint) break;
-                                    sf::Vector2f jointPos = joints[i]->position;
-                                    float distance = std::sqrt((mousePos.x - jointPos.x) * (mousePos.x - jointPos.x) +
+                                    if (joint == selectedJoint) break;
+                                    const sf::Vector2f jointPos = joint->position;
+                                    const float distance = std::sqrt((mousePos.x - jointPos.x) * (mousePos.x - jointPos.x) +
                                         (mousePos.y - jointPos.y) * (mousePos.y - jointPos.y));
                                     if (distance <= Constants::radius * 2)
                                     {
-                                        sticks.push_back(new Stick(joints[i], selectedJoint, Constants::white));
+                                        sticks.push_back(new Stick(joint, selectedJoint, Constants::white));
                                         found = true;
-                                        selectedJoint = joints[i];
+                                        selectedJoint = joint;
                                         break;
                                     }
                                 }
@@ -259,14 +257,14 @@ void handleInput(sf::RenderWindow& window, sf::Event& event, BWindow& bWindow)
                         }
                         else
                         {
-                            for (int i = 0; i < joints.size(); i++)
+                            for (const auto& joint : joints)
                             {
-                                sf::Vector2f jointPos = joints[i]->position;
-                                float distance = std::sqrt((mousePos.x - jointPos.x) * (mousePos.x - jointPos.x) +
+	                            const sf::Vector2f jointPos = joint->position;
+	                            const float distance = std::sqrt((mousePos.x - jointPos.x) * (mousePos.x - jointPos.x) +
                                     (mousePos.y - jointPos.y) * (mousePos.y - jointPos.y));
                                 if (distance <= Constants::radius * 2)
                                 {
-                                    selectedJoint = joints[i];
+                                    selectedJoint = joint;
                                     found = true;
                                     break;
                                 }
@@ -286,14 +284,14 @@ void handleInput(sf::RenderWindow& window, sf::Event& event, BWindow& bWindow)
 
                 if (bWindow.isButtonSelected(3))
                 {
-                    for (int i = 0; i < joints.size(); i++)
+                    for (const auto& joint : joints)
                     {
-                        sf::Vector2f jointPos = joints[i]->position;
-                        float distance = std::sqrt((mousePos.x - jointPos.x) * (mousePos.x - jointPos.x) +
+	                    const sf::Vector2f jointPos = joint->position;
+	                    const float distance = std::sqrt((mousePos.x - jointPos.x) * (mousePos.x - jointPos.x) +
                             (mousePos.y - jointPos.y) * (mousePos.y - jointPos.y));
                         if (distance <= Constants::radius)
                         {
-                            joints[i]->deleted = true;
+	                        joint->deleted = true;
                             break;
                         }
                     }
@@ -304,17 +302,18 @@ void handleInput(sf::RenderWindow& window, sf::Event& event, BWindow& bWindow)
 }
 
 
-void updateAll(std::vector<Stick*>& sticks, std::vector<Joint*>& joints, float deltaTime, sf::Vector2f gravity)
+void updateAll(const std::vector<Stick*>& sticks, const std::vector<Joint*>& joints, const float deltaTime,
+               const sf::Vector2f gravity)
 {
-    for (int i = 0; i < joints.size(); i++)
+    for (const auto joint : joints)
     {
-		joints[i]->update(deltaTime, gravity);
+	    joint->update(deltaTime, gravity);
 	}
     for (int i = 0; i < Constants::stiffnes; i++)
     {
-        for (int i = 0; i < sticks.size(); i++)
+        for (const auto stick : sticks)
         {
-            sticks[i]->update();
+	        stick->update();
         }
     }
 }
@@ -322,9 +321,9 @@ void updateAll(std::vector<Stick*>& sticks, std::vector<Joint*>& joints, float d
 void checkDeletion(std::vector<Stick*>& sticks, std::vector<Joint*>& joints)
 {
     std::vector<Joint*> jointsToDelete;
-    for (int i = 0; i < joints.size(); i++)
+    for (auto& joint : joints)
     {
-        if (joints[i]->deleted) jointsToDelete.push_back(joints[i]);
+        if (joint->deleted) jointsToDelete.push_back(joint);
     }
     for (Joint* joint : jointsToDelete) {
         for (int i = 0; i < sticks.size(); i++)
@@ -343,13 +342,13 @@ void checkDeletion(std::vector<Stick*>& sticks, std::vector<Joint*>& joints)
 
 void deleteAll(std::vector<Stick*>& sticks, std::vector<Joint*>& joints)
 {
-    for (int i = 0; i < sticks.size(); i++)
+    for (const auto& stick : sticks)
     {
-		delete sticks[i];
+		delete stick;
 	}
-    for (int i = 0; i < joints.size(); i++)
+    for (const auto& joint : joints)
     {
-		delete joints[i];
+		delete joint;
 	}
 	sticks.clear();
 	joints.clear();
@@ -365,72 +364,72 @@ void startSimulation()
     oldJoints.clear();
     bool selected = false;
     
-    for (int i = 0; i < sticks.size(); i++)
+    for (const auto& stick : sticks)
     {
         Joint* jointA = nullptr;
         Joint* jointB = nullptr;
-        for (int j = 0; j < oldJoints.size(); j++)
+        for (const auto& oldJoint : oldJoints)
         {
-            if (oldJoints[j]->position == sticks[i]->jointA->position)
+            if (oldJoint->position == stick->jointA->position)
             {
-                jointA = oldJoints[j];
+                jointA = oldJoint;
                 break;
             }
         }
-        for (int j = 0; j < oldJoints.size(); j++)
+        for (const auto& oldJoint : oldJoints)
         {
-            if (oldJoints[j]->position == sticks[i]->jointB->position)
+            if (oldJoint->position == stick->jointB->position)
             {
-                jointB = oldJoints[j];
+                jointB = oldJoint;
                 break;
             }
         }
         if (jointA && jointB)
         {
-            oldSticks.push_back(new Stick(jointA, jointB, sticks[i]->color));
+            oldSticks.push_back(new Stick(jointA, jointB, stick->color));
         }
         else if (jointA)
         {
-            oldJoints.emplace_back(jointB = new Joint(sticks[i]->jointB->position, sticks[i]->jointB->color, sticks[i]->jointB->fixed));
-            oldSticks.push_back(new Stick(jointA, jointB, sticks[i]->color));
+            oldJoints.emplace_back(jointB = new Joint(stick->jointB->position, stick->jointB->color, stick->jointB->fixed));
+            oldSticks.push_back(new Stick(jointA, jointB, stick->color));
         }
         else if (jointB)
         {
-            oldJoints.emplace_back(jointA = new Joint(sticks[i]->jointA->position, sticks[i]->jointA->color, sticks[i]->jointA->fixed));
-            oldSticks.push_back(new Stick(jointA, jointB, sticks[i]->color));
+            oldJoints.emplace_back(jointA = new Joint(stick->jointA->position, stick->jointA->color, stick->jointA->fixed));
+            oldSticks.push_back(new Stick(jointA, jointB, stick->color));
         }
         else
         {
-            oldJoints.emplace_back(jointA = new Joint(sticks[i]->jointA->position, sticks[i]->jointA->color, sticks[i]->jointA->fixed));
-            oldJoints.emplace_back(jointB = new Joint(sticks[i]->jointB->position, sticks[i]->jointB->color, sticks[i]->jointB->fixed));
-            oldSticks.push_back(new Stick(jointA, jointB, sticks[i]->color));
+            oldJoints.emplace_back(jointA = new Joint(stick->jointA->position, stick->jointA->color, stick->jointA->fixed));
+            oldJoints.emplace_back(jointB = new Joint(stick->jointB->position, stick->jointB->color, stick->jointB->fixed));
+            oldSticks.push_back(new Stick(jointA, jointB, stick->color));
         }
-        if (selectedJoint && selectedJoint->position == sticks[i]->jointA->position)
+        if (selectedJoint && selectedJoint->position == stick->jointA->position)
         {
             selectedJoint = jointA;
             selected = true;
         }
-        else if (selectedJoint && selectedJoint->position == sticks[i]->jointB->position)
+        else if (selectedJoint && selectedJoint->position == stick->jointB->position)
         {
             selectedJoint = jointB;
             selected = true;
         }
     }
 
-    for (int i = 0; i < joints.size(); i++)
+    for (const auto& joint : joints)
     {
         bool found = false;
-        for (int j = 0; j < oldJoints.size(); j++)
+        for (const auto& oldJoint : oldJoints)
         {
-            if (joints[i]->position == oldJoints[j]->position)
+            if (joint->position == oldJoint->position)
             {
                 found = true;
 				break;
 			}
 		}
         if (!found)
-        oldJoints.emplace_back(new Joint(joints[i]->position, joints[i]->color, joints[i]->fixed));
-        if (selectedJoint && selectedJoint->position == joints[i]->position && !selected)
+        oldJoints.emplace_back(new Joint(joint->position, joint->color, joint->fixed));
+        if (selectedJoint && selectedJoint->position == joint->position && !selected)
         {
 			selectedJoint = oldJoints[oldJoints.size() - 1];
             selected = true;

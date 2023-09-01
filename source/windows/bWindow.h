@@ -1,6 +1,5 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
 #include "imgui.h"
 
 class BWindow {
@@ -15,8 +14,8 @@ public:
 
     void update(bool& delAll, int& lastSelected, bool& stopSim, bool& startSim);
     void selectButton(int buttonIndex);
-    bool isButtonSelected(int buttonIndex);
-    int getSelectedButton();
-    bool isWindowFocused();
+    bool isButtonSelected(int buttonIndex) const;
+    int getSelectedButton() const;
+    bool isWindowFocused() const;
 
 };
